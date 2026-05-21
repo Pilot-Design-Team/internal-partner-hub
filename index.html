@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chamber Partner Activation Hub | Pilot</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Space+Mono:wght@400&family=La+Belle+Aurore&display=swap" rel="stylesheet">
+<style>
+:root{
+  --profit:#281350;--pilot:#5931DC;--brilliant:#825BEB;--highlight:#DECEFF;--margin:#F6F3FF;
+  --access:#FCF3D6;--clarity:#FBEDFF;--trust:#E7F9FF;
+  --pblack:#3F3C3D;--lgray:#E0E0E0;--offwhite:#F8F8F8;--card:#FFFFFF;
+  --border:#DECEFF;--radius:16px;--shadow:0 2px 8px rgba(89,49,220,0.08);
+  --kat-bg:#5931DC;--kat-fg:#fff;
+  --astrid-bg:#825BEB;--astrid-fg:#fff;
+  --daniel-bg:#E7F9FF;--daniel-fg:#281350;
+  --evan-bg:#FCF3D6;--evan-fg:#281350;
+  --hannah-bg:#FBEDFF;--hannah-fg:#281350;
+  --unowned-bg:#E0E0E0;--unowned-fg:#3F3C3D;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Poppins',sans-serif;background:var(--margin);color:var(--pblack);min-height:100vh;display:flex;flex-direction:column;}
+.mono{font-family:'Space Mono',monospace;}
+/* NAV */
+nav{background:var(--profit);border-bottom:1px solid rgba(222,206,255,0.15);padding:0 28px;display:flex;align-items:center;gap:0;height:60px;position:sticky;top:0;z-index:100;}
+.nav-logo{display:flex;align-items:center;gap:12px;margin-right:32px;white-space:nowrap;text-decoration:none;}
+.nav-logo img{height:28px;width:auto;}
+.nav-logo-divider{width:1px;height:20px;background:rgba(222,206,255,0.3);margin:0 4px;}
+.nav-logo-label{font-family:'Poppins',sans-serif;font-weight:600;font-size:13px;color:rgba(255,255,255,0.8);letter-spacing:0.01em;}
+.nav-tabs{display:flex;gap:2px;height:100%;}
+.nav-tab{background:none;border:none;color:rgba(255,255,255,0.55);padding:0 18px;height:100%;cursor:pointer;font-family:'Poppins',sans-serif;font-size:13px;font-weight:500;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:0.01em;}
+.nav-tab:hover{color:#fff;}
+.nav-tab.active{color:#fff;border-bottom-color:var(--highlight);}
+/* MAIN */
+main{max-width:1400px;margin:0 auto;padding:28px;flex:1;}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;font-family:'Poppins',sans-serif;}
+.badge-kat{background:var(--kat-bg);color:var(--kat-fg);}
+.badge-astrid{background:var(--astrid-bg);color:var(--astrid-fg);}
+.badge-daniel{background:var(--daniel-bg);color:var(--daniel-fg);}
+.badge-evan{background:var(--evan-bg);color:var(--evan-fg);}
+.badge-hannah{background:var(--hannah-bg);color:var(--hannah-fg);}
+.badge-unowned{background:var(--unowned-bg);color:var(--unowned-fg);}
+.badge-status{background:var(--clarity);color:var(--pilot);font-size:11px;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;}
+.badge-eng{background:rgba(89,49,220,0.08);color:var(--brilliant);font-size:11px;font-family:'Space Mono',monospace;}
+/* CARDS */
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden;}
+/* VIEW CONTAINERS */
+.view{display:none;}
+.view.active{display:block;}
+/* DIRECTORY */
+.dir-toolbar{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
+.search-box{flex:1;min-width:200px;position:relative;}
+.search-box input{width:100%;padding:10px 16px 10px 40px;border:1px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:14px;outline:none;transition:border .2s;color:var(--pblack);background:#fff;}
+.search-box input:focus{border-color:var(--pilot);}
+.search-box .icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:16px;}
+.filter-select{padding:9px 14px;border:1px solid var(--border);border-radius:8px;font-family:'Space Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;background:#fff;color:var(--pblack);cursor:pointer;outline:none;}
+.filter-select:focus{border-color:var(--pilot);}
+.partner-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;}
+/* PARTNER CARD */
+.partner-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;cursor:pointer;border:1px solid var(--border);transition:all .2s;position:relative;}
+.partner-card:hover{border-color:var(--pilot);transform:translateY(-2px);box-shadow:0 8px 24px rgba(89,49,220,0.15);}
+.pc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.pc-name{font-size:15px;font-weight:600;color:var(--profit);line-height:1.3;font-family:'Poppins',sans-serif;}
+.pc-location{font-size:11px;color:var(--brilliant);margin-top:2px;font-family:'Space Mono',monospace;}
+.pc-meta{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0;}
+.pc-icons{display:flex;gap:6px;margin-top:12px;align-items:center;}
+.pc-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;}
+.pc-icon.avail{background:rgba(89,49,220,0.10);color:var(--pilot);}
+.pc-icon.unavail{background:#f5f5f5;color:#ccc;opacity:0.7;}
+.pc-contact{font-size:12px;color:var(--brilliant);margin-top:10px;display:flex;align-items:center;gap:5px;font-family:'Space Mono',monospace;}
+.members-badge{font-size:11px;background:var(--clarity);padding:2px 8px;border-radius:10px;color:var(--pilot);font-family:'Space Mono',monospace;}
+/* DETAIL VIEW */
+.detail-back{background:none;border:none;color:var(--pilot);font-family:'Poppins',sans-serif;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:20px;padding:6px 0;}
+.detail-back:hover{opacity:0.8;}
+.detail-header{background:var(--profit);border-radius:var(--radius);padding:32px;margin-bottom:20px;color:#fff;border:1px solid rgba(222,206,255,0.15);}
+.detail-name{font-size:26px;font-weight:700;margin-bottom:6px;font-family:'Poppins',sans-serif;}
+.detail-sub{font-size:12px;color:rgba(222,206,255,0.8);display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:16px;font-family:'Space Mono',monospace;}
+.detail-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.detail-contact{margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);}
+.detail-contact a{color:var(--highlight);text-decoration:none;}
+.detail-contact a:hover{text-decoration:underline;}
+/* ACTIVATION CARDS */
+.activation-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px;}
+.act-card{background:#fff;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);border:1px solid var(--border);border-left:4px solid var(--pilot);}
+.act-card.unavail-card{background:var(--offwhite);border:1px solid var(--lgray);border-left:4px solid var(--lgray);opacity:1;color:rgba(63,60,61,0.5);}
+.act-card.high-value{background:var(--access);border:1px solid var(--pilot);border-left:4px solid var(--pilot);position:relative;}
+.act-card.high-value::before{content:'HIGH VALUE';position:absolute;top:14px;right:14px;background:transparent;color:var(--pilot);border:1px solid var(--pilot);font-family:'Space Mono',monospace;font-size:9px;font-weight:400;padding:2px 7px;border-radius:10px;letter-spacing:0.08em;}
+.act-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.act-icon{font-size:22px;}
+.act-name{font-size:14px;font-weight:600;color:var(--profit);font-family:'Poppins',sans-serif;}
+.act-avail{font-size:12px;font-weight:600;margin-bottom:10px;}
+.act-avail.yes{color:var(--pilot);}
+.act-avail.no{color:var(--lgray);}
+.act-field{margin-bottom:8px;}
+.act-label{font-size:10px;font-weight:400;text-transform:uppercase;letter-spacing:0.08em;color:var(--brilliant);margin-bottom:3px;font-family:'Space Mono',monospace;}
+.act-value{font-size:13px;color:var(--pblack);font-family:'Poppins',sans-serif;}
+.act-initiate{background:var(--margin);border-radius:8px;padding:14px;margin-top:12px;border:1px solid var(--highlight);}
+.act-initiate .act-label{margin-bottom:5px;}
+.act-initiate .act-value{font-size:14px;line-height:1.7;color:var(--profit);font-weight:500;}
+/* NOTES */
+.notes-block{background:#fff;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:24px;border:1px solid var(--border);}
+.notes-block h3{font-size:14px;font-weight:600;color:var(--profit);margin-bottom:10px;display:flex;align-items:center;gap:8px;font-family:'Poppins',sans-serif;}
+.notes-text{font-size:14px;color:var(--pblack);line-height:1.7;white-space:pre-wrap;font-family:'Poppins',sans-serif;}
+.edit-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--brilliant);font-family:'Space Mono',monospace;margin-left:auto;text-transform:uppercase;letter-spacing:0.04em;}
+.edit-btn:hover{border-color:var(--pilot);color:var(--pilot);}
+.notes-textarea{width:100%;min-height:100px;padding:10px;border:1px solid var(--pilot);border-radius:8px;font-family:'Poppins',sans-serif;font-size:14px;line-height:1.6;resize:vertical;outline:none;}
+/* ACTIVITY LOG */
+.log-section{background:#fff;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);border:1px solid var(--border);}
+.log-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.log-summary{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.log-stat{background:var(--clarity);border-radius:8px;padding:6px 12px;font-size:11px;font-family:'Space Mono',monospace;}
+.log-stat span{color:var(--pilot);font-weight:700;}
+.log-entry{border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;position:relative;background:#fff;}
+.log-entry-header{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px;}
+.log-entry-date{font-size:11px;color:var(--brilliant);font-family:'Space Mono',monospace;}
+.status-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;}
+.status-planned{background:var(--trust);color:#1a5276;font-family:'Space Mono',monospace;}
+.status-inprogress{background:var(--access);color:#7D4A00;font-family:'Space Mono',monospace;}
+.status-completed{background:#E8FDF2;color:#1B6B42;font-family:'Space Mono',monospace;}
+.status-blocked{background:#FFF0F0;color:#A00000;font-family:'Space Mono',monospace;}
+.log-entry-notes{font-size:14px;color:var(--pblack);line-height:1.6;font-family:'Poppins',sans-serif;}
+.log-entry-actions{position:absolute;top:12px;right:12px;display:flex;gap:6px;}
+.icon-btn{background:none;border:none;cursor:pointer;font-size:14px;padding:3px 6px;border-radius:4px;color:var(--brilliant);}
+.icon-btn:hover{background:var(--clarity);color:var(--pilot);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;}
+.btn-primary{background:var(--pilot);color:#fff;}
+.btn-primary:hover{background:var(--profit);}
+.btn-outline{background:#fff;color:var(--pilot);border:1px solid var(--pilot);}
+.btn-outline:hover{background:var(--clarity);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(40,19,80,0.7);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:16px;padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+.modal h3{font-size:18px;font-weight:700;margin-bottom:20px;color:var(--profit);font-family:'Poppins',sans-serif;}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:10px;font-weight:400;text-transform:uppercase;letter-spacing:0.08em;color:var(--brilliant);margin-bottom:6px;font-family:'Space Mono',monospace;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:14px;outline:none;transition:border .2s;color:var(--pblack);}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--pilot);}
+.form-group textarea{min-height:80px;resize:vertical;}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;}
+/* DASHBOARD */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:24px;}
+.dash-stat{background:#fff;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);text-align:center;border:1px solid var(--border);}
+.dash-stat .num{font-size:32px;font-weight:700;color:var(--pilot);font-family:'Space Mono',monospace;}
+.dash-stat .lbl{font-size:11px;color:var(--brilliant);margin-top:4px;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:0.06em;}
+.dash-section{background:#fff;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:20px;border:1px solid var(--border);}
+.dash-section h3{font-size:15px;font-weight:600;color:var(--profit);margin-bottom:16px;display:flex;align-items:center;gap:8px;font-family:'Poppins',sans-serif;}
+.owner-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.owner-bar-wrap{flex:1;background:#f5f5f5;border-radius:10px;height:8px;overflow:hidden;}
+.owner-bar{height:100%;border-radius:10px;transition:width .5s;}
+.owner-count{font-size:11px;font-family:'Space Mono',monospace;color:var(--brilliant);min-width:24px;text-align:right;}
+.act-coverage-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.act-coverage-label{font-size:13px;min-width:200px;}
+.act-coverage-count{font-size:11px;color:var(--pilot);font-family:'Space Mono',monospace;min-width:40px;}
+/* FULL LOG VIEW */
+.log-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+.log-table{width:100%;border-collapse:collapse;}
+.log-table th{text-align:left;padding:10px 14px;font-size:10px;font-weight:400;text-transform:uppercase;letter-spacing:0.08em;color:var(--brilliant);border-bottom:2px solid var(--border);white-space:nowrap;cursor:pointer;font-family:'Space Mono',monospace;}
+.log-table th:hover{color:var(--pilot);}
+.log-table td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:top;}
+.log-table tr:hover td{background:var(--margin);}
+.log-table .partner-link{color:var(--pilot);cursor:pointer;font-weight:600;}
+.log-table .partner-link:hover{text-decoration:underline;}
+/* OWNER VIEW */
+.owner-section{margin-bottom:24px;}
+.owner-section-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--highlight);}
+.owner-section-header .badge{font-size:14px;padding:4px 14px;}
+.owner-entry-count{font-size:11px;color:var(--brilliant);font-family:'Space Mono',monospace;}
+/* TABS */
+.tab-bar{display:flex;gap:4px;background:var(--highlight);border-radius:10px;padding:4px;margin-bottom:20px;width:fit-content;}
+.tab-btn{background:none;border:none;padding:7px 18px;border-radius:6px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:var(--profit);transition:all .2s;}
+.tab-btn.active{background:#fff;color:var(--profit);box-shadow:0 1px 4px rgba(89,49,220,0.15);font-weight:600;}
+/* SECTION TITLE */
+.section-title{font-size:22px;font-weight:600;color:var(--profit);margin-bottom:6px;font-family:'Poppins',sans-serif;}
+.section-sub{font-size:12px;color:var(--brilliant);margin-bottom:20px;font-family:'Space Mono',monospace;}
+/* EMPTY STATE */
+.empty{text-align:center;padding:48px 20px;color:var(--text3);}
+.empty .emoji{font-size:40px;margin-bottom:12px;}
+/* NEEDS ATTENTION */
+.attention-list{display:flex;flex-direction:column;gap:8px;}
+.attention-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--margin);border-radius:8px;cursor:pointer;border:1px solid var(--border);}
+.attention-item:hover{background:var(--highlight);border-color:var(--pilot);}
+.attention-reason{font-size:10px;color:#A00000;font-weight:400;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:0.06em;}
+/* RESPONSIVE */
+@media(max-width:768px){.partner-grid{grid-template-columns:1fr;}.activation-grid{grid-template-columns:1fr;}.dir-toolbar{flex-direction:column;}.log-filters{flex-direction:column;}}
+/* VIEW TOGGLE */
+.view-toggle{display:flex;gap:4px;background:var(--highlight);border-radius:10px;padding:3px;}
+.vtoggle-btn{display:inline-flex;align-items:center;gap:6px;background:none;border:none;padding:7px 14px;border-radius:7px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:500;cursor:pointer;color:var(--profit);transition:all .2s;}
+.vtoggle-btn.active{background:var(--pilot);color:#fff;}
+.vtoggle-btn:not(.active):hover{background:rgba(89,49,220,0.1);}
+/* MATRIX VIEW */
+.matrix-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);}
+.matrix-legend{display:flex;gap:20px;align-items:center;flex-wrap:wrap;padding:10px 16px 10px;font-family:'Space Mono',monospace;font-size:10px;color:var(--brilliant);text-transform:uppercase;letter-spacing:0.06em;background:#fff;border-bottom:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0;}
+.legend-dot{display:inline-flex;align-items:center;gap:6px;}
+.matrix-table{width:100%;border-collapse:collapse;background:#fff;}
+.matrix-table th{padding:12px 14px;font-family:'Space Mono',monospace;font-size:9px;font-weight:400;text-transform:uppercase;letter-spacing:0.08em;color:#fff;background:var(--profit);white-space:nowrap;text-align:center;border-right:1px solid rgba(255,255,255,0.1);}
+.matrix-table th:first-child{text-align:left;min-width:280px;position:sticky;left:0;z-index:2;padding-left:20px;}
+.matrix-table th:last-child{border-right:none;}
+.matrix-table td{padding:0 14px;height:56px;border-bottom:1px solid var(--lgray);border-right:1px solid #f0f0f0;vertical-align:middle;text-align:center;}
+.matrix-table td:first-child{text-align:left;padding-left:20px;position:sticky;left:0;z-index:1;background:inherit;}
+.matrix-table td:last-child{border-right:none;}
+.matrix-table tr:nth-child(even) td{background:#fff;}
+.matrix-table tr:nth-child(odd) td{background:var(--margin);}
+.matrix-table tr:nth-child(even) td:first-child{background:#fff;}
+.matrix-table tr:nth-child(odd) td:first-child{background:var(--margin);}
+.matrix-table tr:hover td{background:var(--highlight) !important;cursor:pointer;}
+.mx-name{font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;color:var(--profit);line-height:1.3;}
+.mx-meta{font-family:'Space Mono',monospace;font-size:10px;color:var(--brilliant);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;}
+.mx-match{font-family:'Space Mono',monospace;font-size:9px;color:var(--pilot);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;}
+.dot-green{background:#22c55e;}
+.dot-amber{background:#f59e0b;}
+.dot-purple{background:#7c3aed;}
+.dot-gray{background:#d1d5db;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo"><img src="pilot-logo.png" alt="Pilot"><div class="nav-logo-divider"></div><span class="nav-logo-label">Chamber Hub</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showView('dashboard')">🏠 Dashboard</button>
+    <button class="nav-tab" onclick="showView('directory')">🗂 Partners</button>
+    <button class="nav-tab" onclick="showView('actlog')">📋 Activity Log</button>
+  </div>
+</nav>
+<main>
+<!-- DASHBOARD -->
+<div id="view-dashboard" class="view active">
+  <div class="section-title">Dashboard</div>
+  <div class="section-sub">Portfolio overview and recent activity</div>
+  <div id="dash-stats" class="dash-grid"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;" class="dash-two-col">
+    <div class="dash-section">
+      <h3>👥 Partners by Owner</h3>
+      <div id="dash-owners"></div>
+    </div>
+    <div class="dash-section">
+      <h3>⚡ Activation Coverage</h3>
+      <div id="dash-coverage"></div>
+    </div>
+  </div>
+  <div class="dash-section">
+    <h3>🕐 Recent Activity <span style="font-size:12px;color:var(--text3);font-weight:400;margin-left:8px;">Last 10 entries</span></h3>
+    <div id="dash-recent"></div>
+  </div>
+  <div class="dash-section">
+    <h3>⚠️ Needs Attention</h3>
+    <div id="dash-attention"></div>
+  </div>
+</div>
+<!-- DIRECTORY -->
+<div id="view-directory" class="view">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:6px;">
+    <div>
+      <div class="section-title">Partner Directory</div>
+      <div class="section-sub" id="dir-count">Loading partners...</div>
+    </div>
+    <div class="view-toggle" id="view-toggle">
+      <button id="toggle-cards" class="vtoggle-btn active" onclick="setDirView('cards')" title="Card View">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor"/></svg>
+        Cards
+      </button>
+      <button id="toggle-matrix" class="vtoggle-btn" onclick="setDirView('matrix')" title="Matrix View">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="2" rx="1" fill="currentColor"/><rect x="1" y="7" width="14" height="2" rx="1" fill="currentColor"/><rect x="1" y="12" width="14" height="2" rx="1" fill="currentColor"/></svg>
+        Matrix
+      </button>
+    </div>
+  </div>
+  <div class="dir-toolbar">
+    <div class="search-box">
+      <span class="icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Search chambers, locations, contacts, notes..." oninput="renderDirectory()">
+    </div>
+    <select class="filter-select" id="filter-owner" onchange="renderDirectory()">
+      <option value="">All Owners</option>
+      <option value="Kat">Kat</option>
+      <option value="Astrid">Astrid</option>
+      <option value="Daniel">Daniel</option>
+      <option value="Evan">Evan</option>
+      <option value="Hannah">Hannah</option>
+      <option value="-">Unowned</option>
+    </select>
+    <select class="filter-select" id="filter-status" onchange="renderDirectory()">
+      <option value="">All Statuses</option>
+      <option value="Signed">Signed</option>
+      <option value="Engaged">Engaged</option>
+      <option value="Producing SQLs">Producing SQLs</option>
+      <option value="Pause">Pause</option>
+    </select>
+    <select class="filter-select" id="filter-eng" onchange="renderDirectory()">
+      <option value="">All Engagement</option>
+      <option value="Excellent">⭐⭐⭐⭐⭐ Excellent</option>
+      <option value="Above Avg">⭐⭐⭐⭐ Above Avg</option>
+      <option value="Average">⭐⭐⭐ Average</option>
+      <option value="Neutral">⭐⭐⭐ Neutral</option>
+      <option value="Bad">⭐⭐⭐ Bad</option>
+    </select>
+    <select class="filter-select" id="filter-activation" onchange="renderDirectory()">
+      <option value="">Any Activation</option>
+      <option value="newsletter_general">📰 Newsletter (General)</option>
+      <option value="social">📱 Social Post</option>
+      <option value="website">Website Spotlight</option>
+      <option value="send_info">✉️ Send Our Info</option>
+      <option value="event_sponsorship">🎪 Event Sponsorship</option>
+      <option value="co_planned">🤝 Co-Planned Event</option>
+    </select>
+  </div>
+  <div id="partner-grid" class="partner-grid"></div>
+  <div id="partner-matrix" style="display:none;"></div>
+</div>
+<!-- DETAIL VIEW -->
+<div id="view-detail" class="view">
+  <button class="detail-back" onclick="showView('directory')">← Back to Partners</button>
+  <div id="detail-content"></div>
+</div>
+<!-- ACTIVITY LOG -->
+<div id="view-actlog" class="view">
+  <div class="section-title">Activity Log</div>
+  <div class="section-sub">All partner activities across the team</div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchLogTab('all',this)">All Entries</button>
+    <button class="tab-btn" onclick="switchLogTab('owner',this)">By Owner</button>
+  </div>
+  <div id="log-all-view">
+    <div class="log-filters">
+      <select class="filter-select" id="logf-owner" onchange="renderFullLog()">
+        <option value="">All Owners</option>
+        <option value="Kat">Kat</option>
+        <option value="Astrid">Astrid</option>
+        <option value="Daniel">Daniel</option>
+        <option value="Evan">Evan</option>
+        <option value="Hannah">Hannah</option>
+      </select>
+      <select class="filter-select" id="logf-type" onchange="renderFullLog()">
+        <option value="">All Types</option>
+        <option value="Newsletter (General)">📰 Newsletter (General)</option>
+        <option value="Social Post">📱 Social Post</option>
+        <option value="Website Spotlight">Website Spotlight</option>
+        <option value="Send Our Info">✉️ Send Our Info</option>
+        <option value="Event Sponsorship">🎪 Event Sponsorship</option>
+        <option value="Co-Planned Event">🤝 Co-Planned Event</option>
+        <option value="General">General</option>
+      </select>
+      <select class="filter-select" id="logf-status" onchange="renderFullLog()">
+        <option value="">All Statuses</option>
+        <option value="Planned">Planned</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+        <option value="Blocked">Blocked</option>
+      </select>
+      <select class="filter-select" id="logf-partner" onchange="renderFullLog()">
+        <option value="">All Partners</option>
+      </select>
+    </div>
+    <div id="log-summary-bar" class="log-summary"></div>
+    <div id="full-log-table"></div>
+  </div>
+  <div id="log-owner-view" style="display:none;"></div>
+</div>
+</main>
+<!-- MODAL -->
+<div id="modal-overlay" class="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-title">Log Activity</h3>
+    <div class="form-group">
+      <label>Partner</label>
+      <select id="modal-partner"></select>
+    </div>
+    <div class="form-group">
+      <label>Date</label>
+      <input type="date" id="modal-date">
+    </div>
+    <div class="form-group">
+      <label>Logged By</label>
+      <select id="modal-loggedby">
+        <option value="Kat">Kat</option>
+        <option value="Astrid">Astrid</option>
+        <option value="Daniel">Daniel</option>
+        <option value="Evan">Evan</option>
+        <option value="Hannah">Hannah</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Activation Type</label>
+      <select id="modal-type">
+        <option value="General">General</option>
+        <option value="Newsletter (General)">📰 Newsletter (General)</option>
+        <option value="Social Post">📱 Social Post</option>
+        <option value="Website Spotlight">Website Spotlight</option>
+        <option value="Send Our Info">✉️ Send Our Info</option>
+        <option value="Event Sponsorship">🎪 Event Sponsorship</option>
+        <option value="Co-Planned Event">🤝 Co-Planned Event</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Status</label>
+      <select id="modal-status">
+        <option value="Planned">Planned</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+        <option value="Blocked">Blocked</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="modal-notes" placeholder="What happened, next steps, context..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveLogEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+// Update this path if the CSV file moves. When serving via local HTTP server,
+// this is a relative URL from the server root (playground directory).
+const CSV_PATH = 'partners.csv';
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let partners = [];
+let editingEntryId = null;
+let editingPartnerForModal = null;
+let currentLogTab = 'all';
+let logSortField = 'date';
+let logSortDir = -1;
+
+// ── OWNER CONFIG ─────────────────────────────────────────────────────────────
+const OWNER_COLORS = {Kat:'kat',Astrid:'astrid',Daniel:'daniel',Evan:'evan',Hannah:'hannah','-':'unowned','':'unowned'};
+const OWNER_HEX = {Kat:'#5931DC',Astrid:'#825BEB',Daniel:'#281350',Evan:'#8B6914',Hannah:'#6B2D8B','-':'#A0AEC0','':'#A0AEC0'};
+const ACT_TYPES = [
+  {key:'newsletter_general',label:'Newsletter (General)',icon:'📰'},
+  {key:'social',label:'Social Post',icon:'📱'},
+  {key:'website',label:'Website Spotlight',icon:'🌐'},
+  {key:'send_info',label:'Send Our Info',icon:'✉️'},
+  {key:'event_sponsorship',label:'Event Sponsorship',icon:'🎪'},
+  {key:'co_planned',label:'Co-Planned Event',icon:'🤝'},
+];
+
+// ── CSV PARSING ───────────────────────────────────────────────────────────────
+function parseCSV(csvText) {
+  const result = Papa.parse(csvText, {skipEmptyLines: false});
+  const rows = result.data;
+  // row0 = category headers, row1 = field headers, row2+ = data
+  const parsed = [];
+  for (let i = 2; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r[0] || r[0].trim() === '') continue;
+    // Helper to clean cell
+    const c = (idx) => (r[idx] || '').toString().replace(/\r?\n/g,' ').trim();
+    // Detect tab separator in row 0 for CO-PLANNED boundary
+    // Columns (0-indexed based on CSV structure):
+    // 0:Chamber Name 1:Team 2:Owner 3:Support 4:Location 5:#Members 6:PartnerStatus 7:EngLevel 8:PrimaryContact 9:Email
+    // NEWSLETTER SPOTLIGHT (skip, not in spec): 10-13
+    // NEWSLETTER GENERAL: 14,15,16,17
+    // SOCIAL: 18,19,20,21
+    // WEBSITE: 22,23,24,25
+    // SEND OUR INFO: 26,27,28,29
+    // EVENT SPONSOR: 30,31,32,33 (available, notes)
+    // CO-PLANNED: 34,35 (available, notes)... wait col30=Available,31=Incl,32=Cost,33=Initiate
+    // Looking at row2 headers more carefully from the actual data:
+    // After SEND OUR INFO (26-29), next is EVENT SPONSORSHIP
+    // Row 1 (index 1): col10=Available?,11=Incl,12=Cost,13=Initiate (NEWSLETTER SPOTLIGHT)
+    //   col14=Available?,15=Incl,16=Cost,17=Initiate (NEWSLETTER GENERAL)
+    //   col18=Available?,19=Incl,20=Cost,21=Initiate (SOCIAL)
+    //   col22=Available?,23=Incl,24=Cost,25=Initiate (WEBSITE)
+    //   col26=Available?,27=Notes/HowToInitiate (SEND OUR INFO - only 2 sub-cols based on data)
+    //   Actually SEND OUR INFO has: Available?, Notes/How to Initiate (2 cols per row data)
+    //   Let me re-examine: looking at data row for Clermont:
+    //   ...No,Not established.,Yes,No,"$500–$2,000+",Contact Austin...
+    //   This suggests SEND OUR INFO = col26=Avail, col27=Notes (2 cols)
+    //   Then EVENT SPONSOR = col28=Avail, col29=Incl, col30=CostRange, col31=Initiate
+    //   CO-PLANNED = col32=Avail, col33=Notes
+    //   General Notes = col34
+    // Let me count from Clermont row manually... actually let me just use Papa's parsed arrays
+    const partner = {
+      name: c(0),
+      team: c(1),
+      owner: c(2),
+      support: c(3),
+      location: c(4),
+      members: c(5),
+      status: c(6),
+      engagement: c(7),
+      contact: c(8),
+      email: c(9),
+      // Newsletter Spotlight (col 10-13)
+      newsletter_spotlight_avail: c(10),
+      newsletter_spotlight_incl: c(11),
+      newsletter_spotlight_cost: c(12),
+      newsletter_spotlight_initiate: c(13),
+      // Newsletter General
+      newsletter_general: { avail: c(14), incl: c(15), cost: c(16), initiate: c(17) },
+      // Social
+      social: { avail: c(18), incl: c(19), cost: c(20), initiate: c(21) },
+      // Website
+      website: { avail: c(22), incl: c(23), cost: c(24), initiate: c(25) },
+      // Send Our Info - only 2 sub-cols
+      send_info: { avail: c(26), notes: c(27) },
+      // Event Sponsorship
+      event_sponsorship: { avail: c(28), incl: c(29), cost: c(30), initiate: c(31) },
+      // Co-Planned
+      co_planned: { avail: c(32), notes: c(33) },
+      // General Notes
+      notes: c(34),
+    };
+    parsed.push(partner);
+  }
+  return parsed;
+}
+
+function isAvail(val) {
+  if (!val) return false;
+  const v = val.toLowerCase().trim();
+  return v === 'yes' || v.startsWith('yes') || v === 'included' || v === 'unsure';
+}
+
+function availForKey(p, key) {
+  switch(key) {
+    case 'newsletter_general': return isAvail(p.newsletter_general.avail);
+    case 'social': return isAvail(p.social.avail);
+    case 'website': return isAvail(p.website.avail);
+    case 'send_info': return isAvail(p.send_info.avail);
+    case 'event_sponsorship': return isAvail(p.event_sponsorship.avail);
+    case 'co_planned': return isAvail(p.co_planned.avail);
+    default: return false;
+  }
+}
+
+// ── LOCALSTORAGE ──────────────────────────────────────────────────────────────
+function getLogs() { return JSON.parse(localStorage.getItem('chamberLogs') || '{}'); }
+function saveLogs(logs) { localStorage.setItem('chamberLogs', JSON.stringify(logs)); }
+function getPartnerLogs(name) { return (getLogs()[name] || []); }
+function getNotesOverrides() { return JSON.parse(localStorage.getItem('chamberNotesOverrides') || '{}'); }
+function saveNotesOverride(name, text) {
+  const n = getNotesOverrides(); n[name] = text; localStorage.setItem('chamberNotesOverrides', JSON.stringify(n));
+}
+
+// ── VIEWS ─────────────────────────────────────────────────────────────────────
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  const tabMap = {dashboard:0, directory:1, detail:1, actlog:2};
+  document.querySelectorAll('.nav-tab')[tabMap[id] || 0].classList.add('active');
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'directory') renderDirectory();
+  if (id === 'actlog') renderFullLog();
+}
+
+// ── OWNER BADGE ───────────────────────────────────────────────────────────────
+function ownerBadge(owner, small) {
+  const key = (owner||'-').split('&')[0].trim();
+  const cls = OWNER_COLORS[key] || 'unowned';
+  const sz = small ? 'font-size:11px;padding:2px 8px;' : '';
+  return `<span class="badge badge-${cls}" style="${sz}">${owner||'Unowned'}</span>`;
+}
+
+// ── STATUS BADGE ──────────────────────────────────────────────────────────────
+function statusBadge(s) {
+  const m = {'Planned':'status-planned','In Progress':'status-inprogress','Completed':'status-completed','Blocked':'status-blocked'};
+  return `<span class="status-badge ${m[s]||'status-planned'}">${s}</span>`;
+}
+
+// ── DIRECTORY STATE & VIEW TOGGLE ─────────────────────────────────────────────
+let dirView = localStorage.getItem('dirView') || 'cards';
+
+function setDirView(v) {
+  dirView = v;
+  localStorage.setItem('dirView', v);
+  document.getElementById('toggle-cards').classList.toggle('active', v === 'cards');
+  document.getElementById('toggle-matrix').classList.toggle('active', v === 'matrix');
+  renderDirectory();
+}
+
+// ── SEARCH HELPERS ─────────────────────────────────────────────────────────────
+function getMatchField(p, q) {
+  const checks = [
+    ['LOCATION', p.location],
+    ['CONTACT', p.contact],
+    ['EMAIL', p.email],
+    ['OWNER', p.owner],
+    ['NOTES', p.notes],
+    ['INITIATE', p.newsletter_general.initiate],
+    ['INITIATE', p.social.initiate],
+    ['INITIATE', p.website.initiate],
+    ['INITIATE', p.send_info.notes],
+    ['INITIATE', p.event_sponsorship.initiate],
+    ['INITIATE', p.co_planned.notes],
+  ];
+  for (const [label, val] of checks) {
+    if (val && val.toLowerCase().includes(q)) return label;
+  }
+  return null;
+}
+
+function matchesSearch(p, q) {
+  if (!q) return true;
+  if (p.name.toLowerCase().includes(q)) return true;
+  return getMatchField(p, q) !== null;
+}
+
+// ── MATRIX DOT ─────────────────────────────────────────────────────────────────
+function matrixDot(p, key) {
+  if (key === 'send_info') {
+    if (!isAvail(p.send_info.avail)) return '<span class="dot dot-gray" title="Not available"></span>';
+    const notes = (p.send_info.notes||'').toLowerCase();
+    const highVal = notes.includes('send') || notes.includes('blast') || notes.includes('behalf') || notes.includes('email');
+    return `<span class="dot ${highVal?'dot-purple':'dot-amber'}" title="${(p.send_info.notes||'Available').replace(/"/g,"'")}"></span>`;
+  }
+  let data;
+  switch(key) {
+    case 'newsletter_general': data = p.newsletter_general; break;
+    case 'social': data = p.social; break;
+    case 'website': data = p.website; break;
+    case 'event_sponsorship': data = p.event_sponsorship; break;
+    case 'co_planned':
+      if (!isAvail(p.co_planned.avail)) return '<span class="dot dot-gray" title="Not available"></span>';
+      return `<span class="dot dot-amber" title="${(p.co_planned.notes||'Available').replace(/"/g,"'")}"></span>`;
+    default: return '<span class="dot dot-gray"></span>';
+  }
+  if (!isAvail(data.avail)) return '<span class="dot dot-gray" title="Not available"></span>';
+  const incl = (data.incl||'').toLowerCase();
+  const isIncl = incl === 'yes' || incl.startsWith('yes') || incl === 'included';
+  return `<span class="dot ${isIncl?'dot-green':'dot-amber'}" title="${isIncl?'Included in membership':'Available (paid)'}"></span>`;
+}
+
+function matrixDotSpotlight(p) {
+  if (!isAvail(p.newsletter_spotlight_avail||'')) return '<span class="dot dot-gray" title="Not available"></span>';
+  const incl = (p.newsletter_spotlight_incl||'').toLowerCase();
+  const isIncl = incl === 'yes' || incl.startsWith('yes') || incl === 'included';
+  return `<span class="dot ${isIncl?'dot-green':'dot-amber'}" title="${isIncl?'Included in membership':'Available (paid)'}"></span>`;
+}
+
+const MATRIX_COLS = [
+  {key:'newsletter_spotlight', label:'📧 Newsletter Spotlight'},
+  {key:'newsletter_general',   label:'📰 Newsletter General'},
+  {key:'social',               label:'📱 Social Post'},
+  {key:'send_info',            label:'✉️ Send Our Info'},
+  {key:'event_sponsorship',    label:'🎪 Event Sponsor'},
+  {key:'co_planned',           label:'🤝 Co-Planned'},
+];
+
+// ── DIRECTORY RENDER ──────────────────────────────────────────────────────────
+function renderDirectory() {
+  const search = (document.getElementById('search-input')||{}).value || '';
+  const filterOwner = document.getElementById('filter-owner').value;
+  const filterStatus = document.getElementById('filter-status').value;
+  const filterEng = document.getElementById('filter-eng').value;
+  const filterAct = document.getElementById('filter-activation').value;
+  const q = search.toLowerCase();
+
+  let filtered = partners.filter(p => {
+    if (!matchesSearch(p, q)) return false;
+    if (filterOwner) {
+      const owner = (p.owner||'-').split('&')[0].trim();
+      if (owner !== filterOwner) return false;
+    }
+    if (filterStatus && p.status !== filterStatus) return false;
+    if (filterEng && !p.engagement.includes(filterEng)) return false;
+    if (filterAct && !availForKey(p, filterAct)) return false;
+    return true;
+  });
+
+  document.getElementById('dir-count').textContent = `${filtered.length} partner${filtered.length!==1?'s':''} ${filtered.length < partners.length ? `(filtered from ${partners.length})` : ''}`;
+
+  // Toggle grid vs matrix
+  const isMatrix = dirView === 'matrix';
+  document.getElementById('partner-grid').style.display = isMatrix ? 'none' : '';
+  document.getElementById('partner-matrix').style.display = isMatrix ? 'block' : 'none';
+  document.getElementById('toggle-cards').classList.toggle('active', !isMatrix);
+  document.getElementById('toggle-matrix').classList.toggle('active', isMatrix);
+
+  if (!isMatrix) { renderCards(filtered, q); } else { renderMatrix(filtered, q); }
+}
+
+function renderCards(filtered, q) {
+  const grid = document.getElementById('partner-grid');
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty"><div class="emoji">🔍</div><div>No partners match your filters</div></div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(p => {
+    const icons = ACT_TYPES.map(a => {
+      const av = availForKey(p, a.key);
+      return `<div class="pc-icon ${av?'avail':'unavail'}" title="${a.label}: ${av?'Available':'Not Available'}">${a.icon}</div>`;
+    }).join('');
+    const matchField = q && !p.name.toLowerCase().includes(q) ? getMatchField(p, q) : null;
+    const matchChip = matchField ? `<div class="mx-match">MATCH: ${matchField}</div>` : '';
+    return `<div class="partner-card" onclick="showDetail('${p.name.replace(/'/g,"\\'")}')">
+      <div class="pc-header">
+        <div>
+          <div class="pc-name">${p.name}</div>
+          <div class="pc-location">📍 ${p.location}</div>
+          ${matchChip}
+        </div>
+        <span class="members-badge">${p.members || '?'} members</span>
+      </div>
+      <div class="pc-meta">
+        ${ownerBadge(p.owner, true)}
+        <span class="badge badge-status">${p.status||'Unknown'}</span>
+        <span class="badge badge-eng" style="background:rgba(89,49,220,0.08);color:var(--brilliant);font-size:11px;">${p.engagement||''}</span>
+      </div>
+      <div class="pc-icons">${icons}</div>
+      <div class="pc-contact">👤 ${p.contact||'No contact listed'}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderMatrix(filtered, q) {
+  const el = document.getElementById('partner-matrix');
+  if (!filtered.length) {
+    el.innerHTML = '<div class="empty"><div class="emoji">🔍</div><div>No partners match your filters</div></div>';
+    return;
+  }
+  const headers = MATRIX_COLS.map(c => `<th>${c.label}</th>`).join('');
+  const rows = filtered.map(p => {
+    const matchField = q && !p.name.toLowerCase().includes(q) ? getMatchField(p, q) : null;
+    const matchChip = matchField ? `<div class="mx-match">↳ MATCH: ${matchField}</div>` : '';
+    const ownerName = (p.owner||'—').split('&')[0].trim();
+    const dots = MATRIX_COLS.map(c => {
+      if (c.key === 'newsletter_spotlight') return `<td>${matrixDotSpotlight(p)}</td>`;
+      return `<td>${matrixDot(p, c.key)}</td>`;
+    }).join('');
+    return `<tr onclick="showDetail('${p.name.replace(/'/g,"\\'")}')">
+      <td>
+        <div class="mx-name">${p.name}</div>
+        <div class="mx-meta">${p.location} · ${p.members||'?'} mbrs · ${ownerName}</div>
+        ${matchChip}
+      </td>
+      ${dots}
+    </tr>`;
+  }).join('');
+
+  el.innerHTML = `<div class="matrix-wrap">
+    <div class="matrix-legend">
+      <span class="legend-dot"><span class="dot dot-green"></span> Included in membership</span>
+      <span class="legend-dot"><span class="dot dot-amber"></span> Available (paid add-on)</span>
+      <span class="legend-dot"><span class="dot dot-purple"></span> High-value / sends on our behalf</span>
+      <span class="legend-dot"><span class="dot dot-gray"></span> Not available</span>
+    </div>
+    <table class="matrix-table">
+      <thead><tr><th>Chamber</th>${headers}</tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+// ── DETAIL VIEW ───────────────────────────────────────────────────────────────
+function showDetail(name) {
+  const p = partners.find(x => x.name === name);
+  if (!p) return;
+  const notesOverrides = getNotesOverrides();
+  const notes = notesOverrides[p.name] !== undefined ? notesOverrides[p.name] : p.notes;
+  const logs = getPartnerLogs(p.name);
+
+  const actCards = [
+    renderActCard('📰 Newsletter (General)', 'newsletter_general', p.newsletter_general, false, p),
+    renderActCard('📱 Social Post', 'social', p.social, false, p),
+    renderActCard('🌐 Website Spotlight', 'website', p.website, false, p),
+    renderActCard('✉️ Send Our Info', 'send_info', p.send_info, true, p),
+    renderActCard('🎪 Event Sponsorship', 'event_sponsorship', p.event_sponsorship, false, p),
+    renderActCard('🤝 Co-Planned Event', 'co_planned', p.co_planned, false, p),
+  ].join('');
+
+  const logSummary = buildLogSummary(logs);
+
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-header">
+      <div class="detail-name">${p.name}</div>
+      <div class="detail-sub">
+        <span>📍 ${p.location}</span>
+        <span>👥 ${p.members||'?'} members</span>
+        <span>🏢 ${p.team||''} team</span>
+      </div>
+      <div class="detail-badges">
+        ${ownerBadge(p.owner)} 
+        ${p.support ? `<span class="badge badge-${OWNER_COLORS[(p.support||'').split('&')[0].trim()]||'unowned'}" style="opacity:0.7;">Support: ${p.support}</span>` : ''}
+        <span class="badge" style="background:rgba(0,179,164,0.15);color:var(--pilot);">${p.status||'Unknown'}</span>
+        <span class="badge" style="background:rgba(255,255,255,0.1);color:#fff;">${p.engagement||''}</span>
+      </div>
+      <div class="detail-contact">
+        <strong style="color:rgba(255,255,255,0.8);font-size:13px;">Primary Contact:</strong>
+        <span style="color:#fff;margin-left:8px;">${p.contact||'—'}</span>
+        ${p.email ? `<a href="mailto:${p.email}" style="margin-left:12px;font-size:13px;">✉ ${p.email}</a>` : ''}
+      </div>
+    </div>
+    <h2 style="color:#fff;font-size:17px;margin-bottom:14px;">⚡ Activation Playbook</h2>
+    <div class="activation-grid">${actCards}</div>
+    <div class="notes-block">
+      <h3>📝 General Notes & Next Steps <button class="edit-btn" onclick="editNotes('${p.name.replace(/'/g,"\\'")}')">✏️ Edit</button></h3>
+      <div id="notes-display-${p.name.replace(/[^a-z0-9]/gi,'_')}" class="notes-text">${notes||'No notes added yet.'}</div>
+    </div>
+    <div class="log-section">
+      <div class="log-header">
+        <h3 style="font-size:15px;font-weight:700;color:var(--navy);">📋 Activity Log</h3>
+        <button class="btn btn-primary btn-sm" onclick="openModal('${p.name.replace(/'/g,"\\'")}')">+ Log Activity</button>
+      </div>
+      <div class="log-summary">${logSummary}</div>
+      <div id="partner-log-${p.name.replace(/[^a-z0-9]/gi,'_')}">
+        ${renderPartnerLogEntries(logs, p.name)}
+      </div>
+    </div>`;
+
+  showView('detail');
+}
+
+function renderActCard(label, key, data, isHighValue, p) {
+  if (!data) return '';
+  const avail = isAvail(data.avail);
+  const hv = isHighValue ? 'high-value' : '';
+  const ua = avail ? '' : 'unavail-card';
+  let fields = '';
+  if (key === 'send_info') {
+    fields = `
+      <div class="act-avail ${avail?'yes':'no'}">${avail ? '✅ Available' : '❌ Not Available'}</div>
+      ${avail ? `<div class="act-initiate"><div class="act-label">How to Initiate / Notes</div><div class="act-value">${data.notes||'—'}</div></div>` : ''}`;
+  } else if (key === 'co_planned') {
+    fields = `
+      <div class="act-avail ${avail?'yes':'no'}">${avail ? '✅ Available' : '❌ Not Available'}</div>
+      ${avail ? `<div class="act-initiate"><div class="act-label">Notes / How to Initiate</div><div class="act-value">${data.notes||'—'}</div></div>` : ''}`;
+  } else {
+    fields = `
+      <div class="act-avail ${avail?'yes':'no'}">${avail ? '✅ Available' : '❌ Not Available'}</div>
+      ${data.incl ? `<div class="act-field"><div class="act-label">Included in Membership?</div><div class="act-value">${data.incl}</div></div>` : ''}
+      ${data.cost ? `<div class="act-field"><div class="act-label">Cost</div><div class="act-value mono">${data.cost}</div></div>` : ''}
+      ${data.initiate ? `<div class="act-initiate"><div class="act-label">How to Initiate</div><div class="act-value">${data.initiate}</div></div>` : ''}`;
+  }
+  return `<div class="act-card ${hv} ${ua}">
+    <div class="act-header"><div class="act-icon">${label.split(' ')[0]}</div><div class="act-name">${label.replace(/^[^\s]+\s/,'')}</div></div>
+    ${fields}
+  </div>`;
+}
+
+function buildLogSummary(logs) {
+  if (!logs.length) return '<div class="log-stat">No activities logged yet</div>';
+  const counts = {Planned:0,'In Progress':0,Completed:0,Blocked:0};
+  logs.forEach(l => counts[l.status]=(counts[l.status]||0)+1);
+  return `<div class="log-stat">${logs.length} total</div>` +
+    Object.entries(counts).filter(([,v])=>v>0).map(([k,v])=>`<div class="log-stat">${statusBadge(k)} <span>${v}</span></div>`).join('');
+}
+
+function renderPartnerLogEntries(logs, partnerName) {
+  if (!logs.length) return '<div class="empty" style="padding:24px;"><div class="emoji">📭</div><div>No activities logged yet</div></div>';
+  return [...logs].sort((a,b)=>new Date(b.date)-new Date(a.date)).map(e => `
+    <div class="log-entry" id="entry-${e.id}">
+      <div class="log-entry-actions">
+        <button class="icon-btn" onclick="editEntry('${partnerName.replace(/'/g,"\\'")}','${e.id}')">✏️</button>
+        <button class="icon-btn" onclick="deleteEntry('${partnerName.replace(/'/g,"\\'")}','${e.id}')">🗑</button>
+      </div>
+      <div class="log-entry-header">
+        <span class="log-entry-date">${e.date}</span>
+        ${ownerBadge(e.loggedBy, true)}
+        <span class="badge" style="background:#f0f0f0;color:var(--text2);font-size:11px;">${e.type}</span>
+        ${statusBadge(e.status)}
+      </div>
+      <div class="log-entry-notes">${e.notes||'—'}</div>
+    </div>`).join('');
+}
+
+// ── NOTES EDITING ─────────────────────────────────────────────────────────────
+function editNotes(name) {
+  const p = partners.find(x => x.name === name);
+  if (!p) return;
+  const key = name.replace(/[^a-z0-9]/gi,'_');
+  const notesOverrides = getNotesOverrides();
+  const current = notesOverrides[name] !== undefined ? notesOverrides[name] : p.notes;
+  const el = document.getElementById('notes-display-' + key);
+  el.innerHTML = `<textarea class="notes-textarea" id="notes-edit-${key}">${current}</textarea>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button class="btn btn-primary btn-sm" onclick="saveNotes('${name.replace(/'/g,"\\'")}')">Save</button>
+      <button class="btn btn-outline btn-sm" onclick="cancelNotes('${name.replace(/'/g,"\\'")}')">Cancel</button>
+    </div>`;
+}
+
+function saveNotes(name) {
+  const key = name.replace(/[^a-z0-9]/gi,'_');
+  const val = document.getElementById('notes-edit-'+key).value;
+  saveNotesOverride(name, val);
+  const el = document.getElementById('notes-display-'+key);
+  el.innerHTML = `<div class="notes-text">${val||'No notes added yet.'}</div>`;
+}
+
+function cancelNotes(name) {
+  const p = partners.find(x => x.name === name);
+  const notesOverrides = getNotesOverrides();
+  const current = notesOverrides[name] !== undefined ? notesOverrides[name] : p.notes;
+  const key = name.replace(/[^a-z0-9]/gi,'_');
+  document.getElementById('notes-display-'+key).innerHTML = `<div class="notes-text">${current||'No notes added yet.'}</div>`;
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────────────────
+function openModal(partnerName, entryId) {
+  editingEntryId = entryId || null;
+  editingPartnerForModal = partnerName || null;
+
+  const sel = document.getElementById('modal-partner');
+  sel.innerHTML = partners.map(p=>`<option value="${p.name}" ${p.name===partnerName?'selected':''}>${p.name}</option>`).join('');
+
+  if (entryId) {
+    const logs = getPartnerLogs(partnerName);
+    const entry = logs.find(e => e.id === entryId);
+    if (entry) {
+      document.getElementById('modal-date').value = entry.date;
+      document.getElementById('modal-loggedby').value = entry.loggedBy;
+      document.getElementById('modal-type').value = entry.type;
+      document.getElementById('modal-status').value = entry.status;
+      document.getElementById('modal-notes').value = entry.notes;
+      document.getElementById('modal-title').textContent = 'Edit Activity';
+    }
+  } else {
+    document.getElementById('modal-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('modal-loggedby').value = 'Kat';
+    document.getElementById('modal-type').value = 'General';
+    document.getElementById('modal-status').value = 'Planned';
+    document.getElementById('modal-notes').value = '';
+    document.getElementById('modal-title').textContent = 'Log Activity';
+  }
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  editingEntryId = null;
+  editingPartnerForModal = null;
+}
+
+function saveLogEntry() {
+  const partnerName = document.getElementById('modal-partner').value;
+  const entry = {
+    id: editingEntryId || Date.now().toString(),
+    date: document.getElementById('modal-date').value,
+    loggedBy: document.getElementById('modal-loggedby').value,
+    type: document.getElementById('modal-type').value,
+    status: document.getElementById('modal-status').value,
+    notes: document.getElementById('modal-notes').value,
+  };
+  const logs = getLogs();
+  if (!logs[partnerName]) logs[partnerName] = [];
+  if (editingEntryId) {
+    const idx = logs[partnerName].findIndex(e => e.id === editingEntryId);
+    if (idx >= 0) logs[partnerName][idx] = entry;
+    else logs[partnerName].push(entry);
+  } else {
+    logs[partnerName].push(entry);
+  }
+  saveLogs(logs);
+  closeModal();
+  // Refresh current view
+  const activeView = document.querySelector('.view.active');
+  if (activeView && activeView.id === 'view-detail') {
+    showDetail(editingPartnerForModal || partnerName);
+  } else if (activeView && activeView.id === 'view-actlog') {
+    renderFullLog();
+  } else {
+    renderDashboard();
+  }
+}
+
+function editEntry(partnerName, entryId) {
+  openModal(partnerName, entryId);
+}
+
+function deleteEntry(partnerName, entryId) {
+  if (!confirm('Delete this activity log entry?')) return;
+  const logs = getLogs();
+  if (logs[partnerName]) {
+    logs[partnerName] = logs[partnerName].filter(e => e.id !== entryId);
+    saveLogs(logs);
+  }
+  showDetail(partnerName);
+}
+
+// ── FULL LOG RENDER ───────────────────────────────────────────────────────────
+function switchLogTab(tab, btn) {
+  currentLogTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('log-all-view').style.display = tab === 'all' ? 'block' : 'none';
+  document.getElementById('log-owner-view').style.display = tab === 'owner' ? 'block' : 'none';
+  if (tab === 'owner') renderOwnerView();
+  else renderFullLog();
+}
+
+function getAllLogs() {
+  const logs = getLogs();
+  const all = [];
+  Object.entries(logs).forEach(([partner, entries]) => {
+    entries.forEach(e => all.push({...e, partner}));
+  });
+  return all;
+}
+
+function renderFullLog() {
+  // Populate partner filter
+  const partnerSel = document.getElementById('logf-partner');
+  const currentVal = partnerSel.value;
+  partnerSel.innerHTML = '<option value="">All Partners</option>' + partners.map(p=>`<option value="${p.name}">${p.name}</option>`).join('');
+  if (currentVal) partnerSel.value = currentVal;
+
+  const filterOwner = document.getElementById('logf-owner').value;
+  const filterType = document.getElementById('logf-type').value;
+  const filterStatus = document.getElementById('logf-status').value;
+  const filterPartner = document.getElementById('logf-partner').value;
+
+  let entries = getAllLogs().filter(e => {
+    if (filterOwner && e.loggedBy !== filterOwner) return false;
+    if (filterType && e.type !== filterType) return false;
+    if (filterStatus && e.status !== filterStatus) return false;
+    if (filterPartner && e.partner !== filterPartner) return false;
+    return true;
+  });
+
+  // Sort
+  entries.sort((a,b) => {
+    let va = a[logSortField], vb = b[logSortField];
+    if (logSortField === 'date') { va = new Date(va); vb = new Date(vb); }
+    return logSortDir * (va > vb ? 1 : va < vb ? -1 : 0);
+  });
+
+  // Summary bar
+  const counts = {Planned:0,'In Progress':0,Completed:0,Blocked:0};
+  entries.forEach(e => counts[e.status]=(counts[e.status]||0)+1);
+  document.getElementById('log-summary-bar').innerHTML =
+    `<div class="log-stat">Total: <span>${entries.length}</span></div>` +
+    Object.entries(counts).filter(([,v])=>v>0).map(([k,v])=>`<div class="log-stat">${statusBadge(k)} <span>${v}</span></div>`).join('');
+
+  const btn = (f, label) => {
+    const active = logSortField === f;
+    const arrow = active ? (logSortDir === 1 ? ' ↑' : ' ↓') : '';
+    return `<th onclick="sortLog('${f}')">${label}${arrow}</th>`;
+  };
+
+  if (!entries.length) {
+    document.getElementById('full-log-table').innerHTML = '<div class="empty" style="padding:32px;"><div class="emoji">📭</div><div>No log entries match filters</div><button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="openModal(null)">Log First Activity</button></div>';
+    return;
+  }
+
+  document.getElementById('full-log-table').innerHTML = `
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+      <button class="btn btn-primary btn-sm" onclick="openModal(null)">+ Log Activity</button>
+    </div>
+    <div style="overflow-x:auto;"><table class="log-table">
+      <thead><tr>${btn('date','Date')}${btn('partner','Partner')}${btn('loggedBy','Logged By')}${btn('type','Type')}${btn('status','Status')}<th>Notes</th><th></th></tr></thead>
+      <tbody>${entries.map(e => `<tr>
+        <td class="mono" style="white-space:nowrap;font-size:12px;">${e.date}</td>
+        <td><span class="partner-link" onclick="showDetail('${e.partner.replace(/'/g,"\\'")}')">→ ${e.partner}</span></td>
+        <td>${ownerBadge(e.loggedBy, true)}</td>
+        <td style="white-space:nowrap;">${e.type}</td>
+        <td>${statusBadge(e.status)}</td>
+        <td style="max-width:260px;font-size:12px;color:var(--text2);">${e.notes||'—'}</td>
+        <td style="white-space:nowrap;">
+          <button class="icon-btn" onclick="editEntry('${e.partner.replace(/'/g,"\\'")}','${e.id}')">✏️</button>
+          <button class="icon-btn" onclick="deleteEntry('${e.partner.replace(/'/g,"\\'")}','${e.id}')">🗑</button>
+        </td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+}
+
+function sortLog(field) {
+  if (logSortField === field) logSortDir *= -1;
+  else { logSortField = field; logSortDir = -1; }
+  renderFullLog();
+}
+
+function renderOwnerView() {
+  const owners = ['Kat','Astrid','Daniel','Evan','Hannah'];
+  const allLogs = getAllLogs();
+  let html = '';
+  owners.forEach(owner => {
+    const entries = allLogs.filter(e => e.loggedBy === owner).sort((a,b)=>new Date(b.date)-new Date(a.date));
+    if (!entries.length) return;
+    const cls = OWNER_COLORS[owner] || 'unowned';
+    html += `<div class="owner-section">
+      <div class="owner-section-header">
+        <span class="badge badge-${cls}" style="font-size:14px;padding:5px 14px;">${owner}</span>
+        <span class="owner-entry-count">${entries.length} entr${entries.length===1?'y':'ies'}</span>
+      </div>
+      ${entries.map(e=>`<div class="log-entry">
+        <div class="log-entry-header">
+          <span class="log-entry-date">${e.date}</span>
+          <span class="partner-link" onclick="showDetail('${e.partner.replace(/'/g,"\\'")}')">→ ${e.partner}</span>
+          <span class="badge" style="background:#f0f0f0;color:var(--text2);font-size:11px;">${e.type}</span>
+          ${statusBadge(e.status)}
+        </div>
+        <div class="log-entry-notes">${e.notes||'—'}</div>
+      </div>`).join('')}
+    </div>`;
+  });
+  document.getElementById('log-owner-view').innerHTML = html || '<div class="empty"><div class="emoji">📭</div><div>No activity logged yet</div></div>';
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────────
+function renderDashboard() {
+  const allLogs = getAllLogs();
+  const total = partners.length;
+  const activeP = partners.filter(p => p.status === 'Engaged' || p.status === 'Producing SQLs').length;
+  const totalActivities = allLogs.length;
+  const completedActivities = allLogs.filter(e => e.status === 'Completed').length;
+
+  document.getElementById('dash-stats').innerHTML = `
+    <div class="dash-stat"><div class="num">${total}</div><div class="lbl">Total Partners</div></div>
+    <div class="dash-stat"><div class="num">${activeP}</div><div class="lbl">Active Partners</div></div>
+    <div class="dash-stat"><div class="num">${totalActivities}</div><div class="lbl">Activities Logged</div></div>
+    <div class="dash-stat"><div class="num">${completedActivities}</div><div class="lbl">Completed</div></div>`;
+
+  // By Owner
+  const owners = ['Kat','Astrid','Daniel','Evan','Hannah','-'];
+  const ownerCounts = {};
+  owners.forEach(o => ownerCounts[o] = 0);
+  partners.forEach(p => {
+    const o = (p.owner||'-').split('&')[0].trim();
+    ownerCounts[o] = (ownerCounts[o]||0) + 1;
+  });
+  const maxOwner = Math.max(...Object.values(ownerCounts));
+  document.getElementById('dash-owners').innerHTML = owners.filter(o=>ownerCounts[o]>0).map(o=>{
+    const cls = OWNER_COLORS[o]||'unowned';
+    const hex = OWNER_HEX[o]||'#A0AEC0';
+    const pct = maxOwner > 0 ? (ownerCounts[o]/maxOwner*100).toFixed(1) : 0;
+    return `<div class="owner-row">
+      <span class="badge badge-${cls}" style="min-width:80px;justify-content:center;">${o==='- '||o==='-'?'Unowned':o}</span>
+      <div class="owner-bar-wrap"><div class="owner-bar" style="width:${pct}%;background:${hex};"></div></div>
+      <span class="owner-count">${ownerCounts[o]}</span>
+    </div>`;
+  }).join('');
+
+  // Activation coverage
+  document.getElementById('dash-coverage').innerHTML = ACT_TYPES.map(a => {
+    const count = partners.filter(p => availForKey(p, a.key)).length;
+    const pct = total > 0 ? (count/total*100).toFixed(0) : 0;
+    return `<div class="act-coverage-row">
+      <span class="act-coverage-label">${a.icon} ${a.label}</span>
+      <div class="owner-bar-wrap"><div class="owner-bar" style="width:${pct}%;background:var(--pilot);"></div></div>
+      <span class="act-coverage-count">${count}/${total}</span>
+    </div>`;
+  }).join('');
+
+  // Recent activity
+  const recent = [...allLogs].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,10);
+  if (!recent.length) {
+    document.getElementById('dash-recent').innerHTML = '<div class="empty" style="padding:24px;"><div class="emoji">📭</div><div>No activity logged yet</div></div>';
+  } else {
+    document.getElementById('dash-recent').innerHTML = `<table class="log-table" style="width:100%;">
+      <thead><tr><th>Date</th><th>Partner</th><th>By</th><th>Type</th><th>Status</th></tr></thead>
+      <tbody>${recent.map(e=>`<tr>
+        <td class="mono" style="font-size:12px;">${e.date}</td>
+        <td><span class="partner-link" onclick="showDetail('${e.partner.replace(/'/g,"\\'")}')">→ ${e.partner}</span></td>
+        <td>${ownerBadge(e.loggedBy,true)}</td>
+        <td style="font-size:12px;">${e.type}</td>
+        <td>${statusBadge(e.status)}</td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+  }
+
+  // Needs Attention
+  const now = new Date();
+  const attention = partners.filter(p => {
+    const lowEng = p.engagement && (p.engagement.includes('Neutral') || p.engagement.includes('Bad') || p.engagement.includes('Low'));
+    const pLogs = getPartnerLogs(p.name);
+    const lastLog = pLogs.length ? new Date(Math.max(...pLogs.map(l=>new Date(l.date)))) : null;
+    const stale = !lastLog || (now - lastLog) > 60*24*60*60*1000;
+    return lowEng || stale;
+  }).slice(0,8);
+
+  if (!attention.length) {
+    document.getElementById('dash-attention').innerHTML = '<div class="empty" style="padding:24px;"><div class="emoji">✅</div><div>All partners looking good!</div></div>';
+  } else {
+    document.getElementById('dash-attention').innerHTML = `<div class="attention-list">${attention.map(p=>{
+      const lowEng = p.engagement && (p.engagement.includes('Neutral') || p.engagement.includes('Bad'));
+      const pLogs = getPartnerLogs(p.name);
+      const lastLog = pLogs.length ? new Date(Math.max(...pLogs.map(l=>new Date(l.date)))) : null;
+      const days = lastLog ? Math.floor((now-lastLog)/(24*60*60*1000)) : null;
+      const reason = lowEng ? 'Low engagement' : `No activity in ${days||'60+'}d`;
+      return `<div class="attention-item" onclick="showDetail('${p.name.replace(/'/g,"\\'")}')">
+        <div>
+          <div style="font-size:13px;font-weight:600;">${p.name}</div>
+          <div style="font-size:11px;color:var(--text3);">${p.location} · ${ownerBadge(p.owner,true)}</div>
+        </div>
+        <span class="attention-reason">${reason}</span>
+      </div>`;
+    }).join('')}</div>`;
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  fetch(CSV_PATH)
+    .then(r => { if (!r.ok) throw new Error('CSV load failed'); return r.text(); })
+    .then(text => {
+      partners = parseCSV(text);
+      renderDashboard();
+    })
+    .catch(err => {
+      // Fallback: show error with instructions
+      document.getElementById('view-dashboard').innerHTML = `
+        <div style="background:#fff;border-radius:12px;padding:32px;text-align:center;max-width:500px;margin:40px auto;">
+          <div style="font-size:40px;margin-bottom:16px;">⚠️</div>
+          <h2 style="color:var(--profit);margin-bottom:10px;">CSV Load Error</h2>
+          <p style="color:var(--text2);font-size:14px;line-height:1.6;">Could not load the CSV file. This app must be served via a local web server (not opened directly as a file:// URL in most browsers).<br><br>
+          Run: <code style="background:#f5f5f5;padding:4px 8px;border-radius:4px;">python3 -m http.server 8080</code><br>
+          Then open <a href="http://localhost:8080" style="color:var(--pilot);">http://localhost:8080</a></p>
+          <p style="color:var(--text3);font-size:12px;margin-top:16px;">Error: ${err.message}</p>
+        </div>`;
+    });
+});
+
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+<footer style="background:var(--profit);padding:12px 28px;display:flex;align-items:center;justify-content:flex-end;border-top:4px solid var(--pilot);margin-top:auto;">
+  <span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--brilliant);text-transform:uppercase;letter-spacing:0.12em;">PILOT.COM</span>
+</footer>
+</body>
+</html>
